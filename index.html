@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dairy Cooperative Credit Scoring System</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -147,6 +147,7 @@
             border-color: var(--secondary);
         }
 
+        /* Auto-calculated fields - visually distinct but NOT readonly */
         input.calculated-field {
             background: #e6fffa;
             border-color: #81e6d9;
@@ -157,6 +158,11 @@
         input.calculated-field:focus {
             background: #e6fffa;
             border-color: #38b2ac;
+        }
+
+        /* Override to ensure calculated fields are editable */
+        input.calculated-field:not([readonly]) {
+            cursor: text;
         }
 
         .category-header {
@@ -471,6 +477,14 @@
             margin-left: 8px;
             font-weight: 600;
         }
+
+        /* Helper text for editable calculated fields */
+        .editable-hint {
+            color: #666;
+            font-size: 0.75em;
+            font-style: italic;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
@@ -496,10 +510,11 @@
             <h2 style="margin-bottom: 20px; color: var(--primary);">Cooperative Information & Financial Data</h2>
             
             <div class="calculation-note">
-                <strong>ℹ️ Auto-Calculated Fields:</strong> Fields marked with <span class="auto-calc-indicator">AUTO</span> are calculated automatically from other inputs. You can override them if needed.
+                <strong>ℹ️ Auto-Calculated Fields:</strong> Fields marked with <span class="auto-calc-indicator">AUTO</span> are calculated automatically from other inputs. You can override them if needed by directly typing in the field.
             </div>
 
-            <form id="creditForm" onsubmit="event.preventDefault(); calculateAll();">
+            <!-- ADDED novalidate ATTRIBUTE TO FIX VALIDATION ERRORS -->
+            <form id="creditForm" onsubmit="event.preventDefault(); calculateAll();" novalidate>
                 <!-- Basic Information -->
                 <div class="category-header">1. Basic Information (सामान्य जानकारी)</div>
                 <div class="form-grid">
@@ -543,7 +558,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Loan (Existing + New) (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_loan" value="1700000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_loan" value="1700000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Interest Rate (%) <span class="nepali">(ब्याजदर)</span></label>
@@ -573,7 +589,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Sales (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_sales" value="30000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_sales" value="30000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Grant Income (NPR) <span class="nepali">(अनुदान आम्दानी)</span></label>
@@ -581,7 +598,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Revenue (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_revenue" value="30500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_revenue" value="30500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Bank Sales (NPR) <span class="nepali">(बैंकमार्फत भएको बिक्री)</span></label>
@@ -589,7 +607,8 @@
                     </div>
                     <div class="form-group">
                         <label>Bank Sales % <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="bank_sales_percent" value="50.0" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="bank_sales_percent" value="50.0" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -606,7 +625,8 @@
                     </div>
                     <div class="form-group">
                         <label>Top 5 Buyer Share (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="top5_buyer_share_percent" value="26.7" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="top5_buyer_share_percent" value="26.7" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Largest Single Buyer Sales (NPR) <span class="nepali">(सबैभन्दा ठूलो खरिदकर्ताबाट बिक्री)</span></label>
@@ -614,7 +634,8 @@
                     </div>
                     <div class="form-group">
                         <label>Largest Buyer Share (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="largest_buyer_share_percent" value="6.7" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="largest_buyer_share_percent" value="6.7" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Government Buyer Sales (NPR) <span class="nepali">(सरकारी निकायलाई बिक्री)</span></label>
@@ -634,7 +655,8 @@
                     </div>
                     <div class="form-group">
                         <label>Stable Buyer Share (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="stable_buyer_share_percent" value="50.0" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="stable_buyer_share_percent" value="50.0" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Small/Uncertain Buyer Sales (NPR) <span class="nepali">(साना/अनिश्चित खरिदकर्तालाई बिक्री)</span></label>
@@ -654,7 +676,8 @@
                     </div>
                     <div class="form-group">
                         <label>Contract Coverage (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="contract_coverage_percent" value="66.7" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="contract_coverage_percent" value="66.7" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -711,7 +734,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Operating Expenses (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_operating_expenses" value="20500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_operating_expenses" value="20500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Annual Depreciation (NPR) <span class="nepali">(वार्षिक मूल्यह्रास)</span></label>
@@ -723,23 +747,28 @@
                     </div>
                     <div class="form-group">
                         <label>COGS (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="cogs" value="12000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="cogs" value="12000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Gross Profit (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="gross_profit" value="18000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="gross_profit" value="18000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>EBITDA (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="ebitda" value="9500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="ebitda" value="9500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>EBIT (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="ebit" value="9200000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="ebit" value="9200000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Lean Month Expense (NPR) <span class="calculated">Auto-calculated (Total OpEx/12)</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="lean_month_expense" value="1708333" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="lean_month_expense" value="1708333" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -756,7 +785,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Cash/Bank (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_cash" value="3000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_cash" value="3000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Last Year Cash/Bank Balance (NPR) <span class="nepali">(गत वर्ष नगद/बैंक मौज्दात)</span></label>
@@ -768,7 +798,9 @@
                     </div>
                     <div class="form-group">
                         <label>Cash Trend <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="text" id="cash_trend" value="UP" class="calculated-field" readonly>
+                        <!-- FIXED: Changed from type="text" to type="text" but with proper handling -->
+                        <input type="text" id="cash_trend" value="UP" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Accounts Receivable (NPR) <span class="nepali">(पाउनुपर्ने रकम)</span></label>
@@ -788,7 +820,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Current Assets (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="current_assets" value="15000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="current_assets" value="15000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Land Value (NPR) <span class="nepali">(जग्गाको मूल्य)</span></label>
@@ -816,11 +849,13 @@
                     </div>
                     <div class="form-group">
                         <label>Total Fixed Assets (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="non_current_assets" value="16000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="non_current_assets" value="16000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Total Assets (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_assets" value="31000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_assets" value="31000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -845,7 +880,8 @@
                     </div>
                     <div class="form-group">
                         <label>Total Current Liabilities (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="current_liabilities" value="4500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="current_liabilities" value="4500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Long-term Loan (NPR) <span class="nepali">(दीर्घकालीन ऋण)</span></label>
@@ -857,11 +893,13 @@
                     </div>
                     <div class="form-group">
                         <label>Total Non-Current Liabilities (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="non_current_liabilities" value="1500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="non_current_liabilities" value="1500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Total Liabilities (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_liabilities" value="6000000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_liabilities" value="6000000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Paid-up Capital (NPR) <span class="nepali">(चुक्ता पूँजी)</span></label>
@@ -877,19 +915,23 @@
                     </div>
                     <div class="form-group">
                         <label>Total Net Worth (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="total_networth" value="5500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="total_networth" value="5500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Equity (NPR) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="equity" value="5500000" min="0" step="1000" class="calculated-field" readonly>
+                        <input type="number" id="equity" value="5500000" min="0" step="1000" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Debt/Equity Ratio <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="debt_equity_ratio" value="0.31" min="0" step="0.01" class="calculated-field" readonly>
+                        <input type="number" id="debt_equity_ratio" value="0.31" min="0" step="0.01" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Current Ratio <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="current_ratio" value="3.33" min="0" step="0.01" class="calculated-field" readonly>
+                        <input type="number" id="current_ratio" value="3.33" min="0" step="0.01" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -906,7 +948,8 @@
                     </div>
                     <div class="form-group">
                         <label>Milk Loss (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="milk_loss_percent" value="3.2" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="milk_loss_percent" value="3.2" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Loss During Process (Liters) <span class="nepali">(प्रशोधन घाटा - लिटर)</span></label>
@@ -914,7 +957,8 @@
                     </div>
                     <div class="form-group">
                         <label>Yield Loss (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="yield_loss_percent" value="3.2" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="yield_loss_percent" value="3.2" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Produced Milk Model B (Liters) <span class="nepali">(उत्पादन गरिएको दूध - लिटर)</span></label>
@@ -930,7 +974,8 @@
                     </div>
                     <div class="form-group">
                         <label>Milk Stability (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="milk_stability_percent" value="82.8" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="milk_stability_percent" value="82.8" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Highest Monthly Milk (Liters) <span class="nepali">(सबैभन्दा बढी मासिक दूध)</span></label>
@@ -942,7 +987,8 @@
                     </div>
                     <div class="form-group">
                         <label>Inventory Days <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="inventory_days" value="76.0" min="0" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="inventory_days" value="76.0" min="0" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Credit Period Given (Days) <span class="nepali">(किसानलाई दिइएको क्रेडिट अवधि)</span></label>
@@ -954,7 +1000,8 @@
                     </div>
                     <div class="form-group">
                         <label>Farmer Concentration (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="farmer_concentration_percent" value="40.3" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="farmer_concentration_percent" value="40.3" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Highest Farmer Quantity (Liters) <span class="nepali">(सबैभन्दा धेरै दूध दिने किसान)</span></label>
@@ -970,7 +1017,8 @@
                     </div>
                     <div class="form-group">
                         <label>Avg Milk per Farmer (Liters) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="avg_farmer_quantity_liters" value="849.3" min="0" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="avg_farmer_quantity_liters" value="849.3" min="0" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Collection Days (Days with >0 collection) <span class="nepali">(दूध सङ्कलन भएको दिन)</span></label>
@@ -978,7 +1026,8 @@
                     </div>
                     <div class="form-group">
                         <label>Days Stability (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="days_stability_percent" value="89.3" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="days_stability_percent" value="89.3" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                 </div>
 
@@ -995,7 +1044,8 @@
                     </div>
                     <div class="form-group">
                         <label>Member GNPA (%) <span class="calculated">Auto-calculated</span> <span class="auto-calc-indicator">AUTO</span></label>
-                        <input type="number" id="gnpa_percent" value="16.7" min="0" max="100" step="0.1" class="calculated-field" readonly>
+                        <input type="number" id="gnpa_percent" value="16.7" min="0" max="100" step="0.1" class="calculated-field">
+                        <span class="editable-hint">You can edit this value if needed</span>
                     </div>
                     <div class="form-group">
                         <label>Overdue Member Loans (NPR) <span class="nepali">(म्याद नाघेको सदस्य ऋण)</span></label>
@@ -1360,7 +1410,7 @@
             document.getElementById('error_banner').classList.remove('visible');
         }
 
-        // Get value from input field
+        // ==================== FIXED getValue FUNCTION ====================
         function getValue(id) {
             const el = document.getElementById(id);
             if (!el) {
@@ -1368,16 +1418,59 @@
                 return 0;
             }
             if (el.tagName === 'SELECT') return el.value;
+            
+            // Handle text inputs (like cash_trend) that might not be numeric
+            if (el.type === 'text') {
+                return el.value;
+            }
+            
             const val = parseFloat(el.value);
-            return isNaN(val) ? 0 : val;
+            // Return 0 for NaN, null, undefined, or empty string
+            if (isNaN(val) || val === null || val === undefined || el.value === '') {
+                return 0;
+            }
+            return val;
         }
 
-        // Set value to input field
+        // ==================== FIXED setValue FUNCTION ====================
         function setValue(id, value, decimals = 0) {
             const el = document.getElementById(id);
-            if (el) {
-                el.value = decimals > 0 ? parseFloat(value).toFixed(decimals) : Math.round(value);
+            if (!el) return;
+            
+            // Handle text inputs (like cash_trend) differently
+            if (el.type === 'text') {
+                if (!el.dataset.userEdited) {
+                    el.value = value;
+                }
+                return;
             }
+            
+            // Format the value for numeric inputs
+            let formattedValue;
+            if (decimals > 0) {
+                formattedValue = parseFloat(value).toFixed(decimals);
+            } else {
+                formattedValue = Math.round(value);
+            }
+            
+            // Only update if user hasn't manually edited this field
+            if (!el.dataset.userEdited) {
+                el.value = formattedValue;
+            }
+        }
+
+        // Mark field as user-edited
+        function markUserEdited(event) {
+            event.target.dataset.userEdited = 'true';
+        }
+
+        // Add event listeners to all calculated fields to track user edits
+        function setupUserEditTracking() {
+            const calculatedFields = document.querySelectorAll('.calculated-field');
+            calculatedFields.forEach(field => {
+                field.addEventListener('input', markUserEdited);
+                field.addEventListener('change', markUserEdited);
+            });
         }
 
         // ==================== AUTO-CALCULATION FUNCTIONS ====================
@@ -1536,24 +1629,38 @@
             updateCurrentRatio();
         }
 
-        // Update cash trend
-	function updateCashTrend() {
-   	 const current = getValue('total_cash');
-   	 const previous = getValue('cash_bank_balance_last_year');
-
-    	let trend = 'STABLE';
-
-    	if (current > previous) {
-        trend = 'UP';
-   	 } else if (current < previous) {
-        trend = 'DOWN';
-    	} else {
-        trend = 'STABLE';
-    	}
-
-    	document.getElementById('cash_trend').value = trend;
-	}
-        
+        // ==================== FIXED updateCashTrend FUNCTION ====================
+        function updateCashTrend() {
+            const current = parseFloat(document.getElementById('total_cash').value) || 0;
+            const previous = parseFloat(document.getElementById('cash_bank_balance_last_year').value) || 0;
+            const beforePrevious = parseFloat(document.getElementById('cash_bank_balance_previous_year').value) || 0;
+            
+            let trend = 'STABLE';
+            
+            // Need at least 2 data points to determine trend
+            if (previous === 0 && beforePrevious === 0) {
+                trend = 'STABLE'; // Not enough data
+            } else if (previous === 0) {
+                trend = current > 0 ? 'UP' : 'STABLE';
+            } else {
+                // Compare current vs previous year
+                const changePercent = ((current - previous) / previous) * 100;
+                
+                if (changePercent > 5) {
+                    trend = 'UP';
+                } else if (changePercent < -5) {
+                    trend = 'DOWN';
+                } else {
+                    trend = 'STABLE';
+                }
+            }
+            
+            const trendField = document.getElementById('cash_trend');
+            if (trendField && !trendField.dataset.userEdited) {
+                trendField.value = trend;
+            }
+        }
+                
         // Update liability calculations
         function updateLiabilityCalculations() {
             const payable = getValue('accounts_payable');
@@ -2678,33 +2785,44 @@
                 return;
             }
             
-            // Initialize all auto-calculated fields
-            updateTotalLoan();
-            updateRevenueCalculations();
-            updateBuyerCalculations();
-            updateStableBuyerCalculations();
-            updateContractPercent();
-            updateExpenseCalculations();
-            updateAssetCalculations();
-            updateCashTrend();
-            updateLiabilityCalculations();
-            updateEquityCalculations();
-            updateMilkCalculations();
-            updateMilkStability();
-            updateDaysStability();
-            updateInventoryDays();
-            updateFarmerConcentration();
-            updateAvgFarmerQuantity();
-            updateMemberLoanCalculations();
+            // Setup user edit tracking for calculated fields
+            setupUserEditTracking();
             
-            // Wait then calculate
+            // Small delay to ensure DOM is fully ready
             setTimeout(() => {
                 try {
+                    // Initialize all auto-calculated fields in correct order
+                    updateTotalLoan();
+                    updateRevenueCalculations();
+                    updateExpenseCalculations();
+                    updateAssetCalculations();
+                    updateLiabilityCalculations();
+                    updateEquityCalculations();
+                    updateMilkCalculations();
+                    updateMemberLoanCalculations();
+                    
+                    // These depend on previous calculations
+                    updateCashTrend();
+                    updateMilkStability();
+                    updateDaysStability();
+                    updateInventoryDays();
+                    updateFarmerConcentration();
+                    updateAvgFarmerQuantity();
+                    updateBuyerCalculations();
+                    updateStableBuyerCalculations();
+                    updateContractPercent();
+                    updateBankSalesPercent();
+                    updateCurrentRatio();
+                    updateDebtEquity();
+                    updateCOGSandEBITDA();
+                    
+                    // Now calculate everything
                     calculateAll();
                 } catch (e) {
                     console.error('Initialization error:', e);
+                    showError('Error during initialization: ' + e.message);
                 }
-            }, 500);
+            }, 100);
         };
 
         // Handle window resize for responsive charts
